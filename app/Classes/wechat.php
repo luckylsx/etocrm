@@ -35,7 +35,7 @@ class Wechat{
             return $access_token;
         }
         $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpid."&corpsecret=".$this->corpsecret;
-        $resData = file_get_contents($url);
+        $resData = http_get($url);
         $res = json_decode($resData,true);
         $access_token = array_get($res,'access_token');
         Cache::put($key,$access_token,7000);

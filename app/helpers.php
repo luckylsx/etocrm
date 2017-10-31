@@ -39,7 +39,7 @@ if (!function_exists('http_post')){
 if (!function_exists('http_get')){
     function http_get($url){
         $oCurl = curl_init();
-        if(stripos($url,"https://")!==FALSE){
+        if(stripos($url,"https://")!==FALSE || stripos($url,"http://")!==false){
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
             curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
