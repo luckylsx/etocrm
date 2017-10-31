@@ -36,10 +36,10 @@ if (!function_exists('http_post')){
 /**
  * http get请求
  */
-if (!function_exists('http_get')){
-    function http_get($url){
+if (!function_exists('httpGet')){
+    function httpGet($url){
         $oCurl = curl_init();
-        if(stripos($url,"https://")!==FALSE || stripos($url,"http://")!==FALSE){
+        if(stripos($url,"https://")!==FALSE){
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
             curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1

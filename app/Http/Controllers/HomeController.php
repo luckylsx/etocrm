@@ -53,27 +53,8 @@ class Homecontroller extends Controller
         //获取用户信息
         $access_token = $wechat->getAccessToken();
         $url = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token={$access_token}&code={$code}";
-        $resData = $this->http_get($url);
+        $resData = httpGet($url);
         $res = json_decode($resData,true);
         echo "该用户的userId是".array_get($res,'UserId') . "，user_ticket是：".$res['user_ticket'];
-    }
-    public function http_get($url){
-        $oCurl = curl_init();
-        if(stripos($url,"https://")!==FALSE || stripos($url,"http://")!==FALSE){
-            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
-            curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-        }
-        curl_setopt($oCurl, CURLOPT_URL, $url);
-        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-
-        $sContent = curl_exec($oCurl);
-        $aStatus = curl_getinfo($oCurl);
-        curl_close($oCurl);
-        if(intval($aStatus["http_code"])==200){
-            return $sContent;
-        }else{
-            return false;
-        }
     }
 }
