@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 //测试路由
-Route::any("test","HomeController@test");
+Route::any("api/sub","HomeController@test");
