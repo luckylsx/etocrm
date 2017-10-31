@@ -14,9 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::any("test","HomeController@test");
 Route::group(['prefix' => 'api'], function () {
     //测试路由
-    //Route::any("sub","HomeController@test");
+    Route::any("test","HomeController@test");
     //获得授权路由
     Route::any('sub',"HomeController@getAuthorize");
     //获取code路由
