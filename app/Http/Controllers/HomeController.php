@@ -55,6 +55,7 @@ class Homecontroller extends Controller
         $url = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token={$access_token}&code={$code}";
         $resData = httpGet($url);
         $res = json_decode($resData,true);
+        p($res);
         echo "该用户的userId是".array_get($res,'UserId') . "，user_ticket是：".$res['user_ticket'];
     }
 }
