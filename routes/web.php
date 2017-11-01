@@ -24,4 +24,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::any('getCode',"HomeController@getCode");
     //获取jssdk
     Route::any('getSDK',"HomeController@getSDK");
+
+    Route::any('index',"HomeController@index");
 });

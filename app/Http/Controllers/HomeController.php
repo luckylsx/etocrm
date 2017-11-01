@@ -20,9 +20,13 @@ class Homecontroller extends Controller
     public function test(Wechat $wechat)
     {
         //$a = http_get("https://www.baidu.com");
+        echo 123;
         $request = new Request();
         //$wechat->ssdk();
         die;
+    }
+    public function index(){
+        return view("index");
     }
 
     /**
