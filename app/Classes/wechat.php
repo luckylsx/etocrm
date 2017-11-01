@@ -91,12 +91,12 @@ class Wechat{
     }
     public function jssdk($url)
     {
-        $timestamp = time();
+        $timestamp = (string)time();
         $nonceStr = $this->createNonceStr();
         $jsapi_ticket = $this->getJsApiTicket();
-        $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}timestamp={$timestamp}url={$url}";
+        $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
         $signPackage = array(
-            "debug"	  =>true,
+            "debug"	=>true,
             "appId"     => $this->corpid,
             "nonceStr"  => $nonceStr,
             "timestamp" => $timestamp,
