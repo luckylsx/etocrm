@@ -85,7 +85,7 @@ class Homecontroller extends Controller
         }else{
             $url = urldecode($url);
         }
-        echo $url;
+        //echo $url;
         $signPackage = $wechat->jssdk($url);
         echo json_encode($signPackage);die;
     }
