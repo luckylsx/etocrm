@@ -80,8 +80,8 @@ class Homecontroller extends Controller
     public function getSDK(Request $request,Wechat $wechat)
     {
         $input = $request->input();
-        $url = array_get($input,'url');
-        //$url= 'http://dushiliren.com/index.php/admin/Ceshi/index';
+        //$url = array_get($input,'url');
+        $url= 'http://etocrm.lylucky.com/api/index';
         if(empty($url)){
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
             $url = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
