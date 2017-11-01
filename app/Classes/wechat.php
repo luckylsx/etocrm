@@ -94,7 +94,7 @@ class Wechat{
         $timestamp = time();
         $nonceStr = $this->createNonceStr();
         $jsapi_ticket = $this->getJsApiTicket();
-        $string = "jsapi_ticket=" . $jsapi_ticket . "&noncestr=".$nonceStr ."&timestamp=".$timestamp."&url=".$url;
+        $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}timestamp={$timestamp}url={$url}";
         $signPackage = array(
             "debug"	  =>true,
             "appId"     => $this->corpid,
@@ -104,37 +104,7 @@ class Wechat{
             "signature" => sha1($string),
             "rawString" => $string,
             "jsApiList" =>array(
-                'onMenuShareAppMessage',
-                'onMenuShareWechat',
-                'startRecord',
-                'stopRecord',
-                'onVoiceRecordEnd',
-                'playVoice',
-                'pauseVoice',
-                'stopVoice',
-                'onVoicePlayEnd',
-                'uploadVoice',
-                'downloadVoice',
-                'chooseImage',
-                'previewImage',
-                'uploadImage',
-                'downloadImage',
-                'previewFile',
-                'getNetworkType',
-                'openLocation',
-                'getLocation',
-                'onHistoryBack',
-                'hideOptionMenu',
-                'showOptionMenu',
-                'hideMenuItems',
-                'showMenuItems',
-                'hideAllNonBaseMenuItem',
-                'showAllNonBaseMenuItem',
-                'closeWindow',
-                'scanQRCode',
-                'selectEnterpriseContact',
-                'openEnterpriseChat',
-                'chooseInvoice'
+                "scanQRCode"
             )
         );
         return $signPackage;
