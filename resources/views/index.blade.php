@@ -18,7 +18,7 @@
             
         </section>
 
-        <script type="text/javascript" src=" https://res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>  
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
         <script type="text/javascript" src="http://qntest.woaap.com/test/scanCode/js/vendors.js"></script>    
         <script type="text/javascript" src="http://qntest.woaap.com/test/scanCode/js/index.js"></script>
 
