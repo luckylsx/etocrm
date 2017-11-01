@@ -100,8 +100,9 @@ class Wechat{
             "appId"     => $this->corpid,
             "nonceStr"  => $nonceStr,
             "timestamp" => $timestamp,
+            "url" => $url,
             "signature" => sha1($string),
-            "string" => $string,
+            "rawString" => $string,
             "jsApiList" =>array(
                 'onMenuShareAppMessage',
                 'onMenuShareWechat',
@@ -138,6 +139,43 @@ class Wechat{
         );
         return $signPackage;
     }
+
+    /**
+     * 获取应用套件凭证
+     * @return bool|mixed
+     */
+    public function getSuitAccessToken()
+    {
+        $key = "suite_access_token . {$this->corpid} . {$this->corpsecret}";
+        if ($suit_access_token = Cache::get($key)){
+            return $suit_access_token;
+        }
+        $url = "ttps://qyapi.weixin.qq.com/cgi-bin/service/get_suite_token";
+        $data = [
+            "suite_id"=>"id_value" ,
+            "suite_secret"=>"secret_value",
+            "suite_ticket"=>"ticket_value"
+        ];
+        $resData = http_post($url,json_encode($data));
+        $res = json_decode($resData,true);
+        if (array_get($res,'errcode')!=0){
+            return false;
+        }
+        $suit_access_token = array_get($resData,'suite_access_token');
+        return $suit_access_token;
+    }
+
+    /**
+     *
+     */
+   /* public function getPreAuthCode()
+    {
+        $suit_access_token = $this->getSuitAccessToken();
+        $url = "https://qyapi.weixin.qq.com/cgi-bin/service/get_pre_auth_code?suite_access_token={$suit_access_token}";
+        $data = [
+          "suite_id" =>
+        ];
+    }*/
 
 
 }

@@ -20,7 +20,7 @@ class Homecontroller extends Controller
     public function test(Wechat $wechat)
     {
         //$a = http_get("https://www.baidu.com");
-        echo 123;
+        echo $wechat->getJsApiTicket();
         $request = new Request();
         //$wechat->ssdk();
         die;
@@ -85,6 +85,7 @@ class Homecontroller extends Controller
         }else{
             $url = urldecode($url);
         }
+        echo $url;
         $signPackage = $wechat->jssdk($url);
         echo json_encode($signPackage);die;
     }
