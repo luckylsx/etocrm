@@ -103,7 +103,7 @@ class Wechat{
             "url" => $url,
             "signature" => sha1($string),
             "rawString" => $string,
-            "jsApiList" =>array(
+            /*"jsApiList" =>array(
                 'onMenuShareAppMessage',
                 'onMenuShareWechat',
                 'startRecord',
@@ -135,7 +135,7 @@ class Wechat{
                 'selectEnterpriseContact',
                 'openEnterpriseChat',
                 'chooseInvoice'
-            )
+            )*/
         );
         return $signPackage;
     }
