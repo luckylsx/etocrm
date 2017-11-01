@@ -19,9 +19,11 @@ class Homecontroller extends Controller
 
     public function test(Wechat $wechat)
     {
+        //$s = "jsapi_ticket=sM4AOVdWfPE4DxkXGEs8VFZ0ogcFLxdlxvNND1Tw4rn83jttLEpPiuofmE9Q2kg5gJDEvx6jmePHd2G7mmEGTA&noncestr=Vc28Op1V0a88OFWI&timestamp=1509508992&url=http://etocrm.lylucky.com/api/getSDK";
+        //echo sha1($s);
         //$a = http_get("https://www.baidu.com");
-        echo $wechat->getJsApiTicket();
-        $request = new Request();
+        echo $wechat->jssdk("http://etocrm.lylucky.com/api/getSDK");
+        //$request = new Request();
         //$wechat->ssdk();
         die;
     }
@@ -48,7 +50,8 @@ class Homecontroller extends Controller
         $auth_url = "https://open.weixin.qq.com/connect/oauth2/authorize";
         //$auth_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect";
         $redirect = $auth_url . "?appid=" . $appid . "&redirect_uri=".urlencode($redirect_url) . "&response_type=code"."&scope=snsapi_privateinfo&agentid=".$agentid."#wechat_redirect";
-        echo "<a href='{$redirect}'>点击链接授权</a>";
+        return view("shouquan",['url'=>$redirect]);
+        //echo "<a href='{$redirect}'>点击链接授权</a>";
     }
 
     /**
@@ -85,8 +88,8 @@ class Homecontroller extends Controller
         }else{
             $url = urldecode($url);
         }
-        //echo $url;
         $signPackage = $wechat->jssdk($url);
+        //$a = json_encode($signPackage);
         echo json_encode($signPackage);die;
     }
 }
