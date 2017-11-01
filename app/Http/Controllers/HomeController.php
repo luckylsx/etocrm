@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Classes\Wechat;
 class Homecontroller extends Controller
 {
-
+    //企业ID
+    protected $corpid;
+    //应用的凭证密钥
+    protected $corpsecret;
     public function __construct()
     {
         $data = config('wechat.wechat');
@@ -14,10 +17,11 @@ class Homecontroller extends Controller
         $this->corpsecret = array_get($data,'corpsecret');
     }
 
-    public function test()
+    public function test(Wechat $wechat)
     {
-        $a = http_get("https://www.baidu.com");
-        echo $a;
+        //$a = http_get("https://www.baidu.com");
+        $request = new Request();
+        //$wechat->ssdk();
         die;
     }
 
@@ -52,9 +56,32 @@ class Homecontroller extends Controller
         $code = array_get($input,'code');
         //获取用户信息
         $access_token = $wechat->getAccessToken();
+        if (!$access_token){
+            return "授权失败！";
+        }
         $url = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token={$access_token}&code={$code}";
         $resData = httpGet($url);
         $res = json_decode($resData,true);
         echo "该用户的userId是".array_get($res,'UserId') . "，user_ticket是：".$res['user_ticket'];
+    }
+
+    /**
+     * 获取jssdk
+     * @param Request $request
+     * @param Wechat $wechat
+     */
+    public function getSDK(Request $request,Wechat $wechat)
+    {
+        $input = $request->input();
+        $url = array_get($input,'url');
+        //$url= 'http://dushiliren.com/index.php/admin/Ceshi/index';
+        if(empty($url)){
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+            $url = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        }else{
+            $url = urldecode($url);
+        }
+        $signPackage = $wechat->jssdk($url);
+        echo json_encode($signPackage);die;
     }
 }
