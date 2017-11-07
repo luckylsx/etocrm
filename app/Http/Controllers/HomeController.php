@@ -70,6 +70,7 @@ class Homecontroller extends Controller
         $resData = httpGet($url);
         $res = json_decode($resData,true);
         if(array_get($res,'errcode')!=0){
+            p($res);
             echo "获取用户信息失败";
             die;
         }

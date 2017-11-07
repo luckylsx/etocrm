@@ -43,7 +43,7 @@ class Wechat{
         }
         //获取成功
         $access_token = array_get($res,'access_token');
-        Cache::put($key,$access_token,7000);
+        Cache::put($key,$access_token,115); //有效期为分钟
         return $access_token;
     }
 
@@ -72,7 +72,7 @@ class Wechat{
         }
         //获取成功，缓存jsApiTicket
         $jsApiTicket = array_get($res,'ticket');
-        Cache::put($js_key,$jsApiTicket,7000);
+        Cache::put($js_key,$jsApiTicket,115);   //有效期为分钟
         return $jsApiTicket;
 
     }
