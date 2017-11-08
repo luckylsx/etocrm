@@ -115,11 +115,12 @@ class Wechat{
         if (!$jssdk || !is_array($jssdk)){
             return false;
         }
-        $timestamp = array_get($jssdk,'timestamp');
+        $timestamp = (string)array_get($jssdk,'timestamp');
         $nonceStr = array_get($jssdk,'nonceStr');
-        $jsapi_ticket = array_get($jssdk,'rawString');
-        $jsapi_ticket = strstr(substr(strstr($jsapi_ticket,'='),1,-1),'=',true);
+        $js_ticket = array_get($jssdk,'rawString');
+        $jsapi_ticket = strstr(substr(strstr($js_ticket,'='),1,-1),'&',true);
         $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
+        //var_dump($string);
         $signPackage = array(
             "debug"	=>true,
             "appId"     => $this->corpid,
