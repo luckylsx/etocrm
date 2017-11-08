@@ -31,6 +31,7 @@ class Wechat{
     public function getAccessToken(){
         $key = md5($this->corpid . $this->corpsecret);
         //判断access_token是否存在
+	//var_dump(Cache::get($key));
         if ($access_token = Cache::get($key)){
             return $access_token;
         }

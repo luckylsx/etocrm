@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Classes\Wechat;
+use Cache;
 class Homecontroller extends Controller
 {
     //企业ID
@@ -19,10 +20,18 @@ class Homecontroller extends Controller
 
     public function test(Wechat $wechat)
     {
+	//echo 123;
+	//die;
+	$key="test_id";
+	//Cache::put($key,"test redis",1);
+	//var_dump(Cache::get($key));
+	echo "<br>";
+	$keyAc = md5($this->corpid.$this->corpsecret);
+	echo Cache::get($keyAc);
         //$s = "jsapi_ticket=sM4AOVdWfPE4DxkXGEs8VFZ0ogcFLxdlxvNND1Tw4rn83jttLEpPiuofmE9Q2kg5gJDEvx6jmePHd2G7mmEGTA&noncestr=Vc28Op1V0a88OFWI&timestamp=1509508992&url=http://etocrm.lylucky.com/api/getSDK";
         //echo sha1($s);
         //$a = http_get("https://www.baidu.com");
-        echo $wechat->jssdk("http://etocrm.lylucky.com/api/getSDK");
+        //echo $wechat->jssdk("http://etocrm.lylucky.com/api/getSDK");
         //$request = new Request();
         //$wechat->ssdk();
         die;
