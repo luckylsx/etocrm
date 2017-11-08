@@ -13,15 +13,35 @@ use Cache;
  * 微信工具类
  */
 class Wechat{
+    private static $app_name = 'ikea';
     //企业ID
-    protected $corpid;
+    protected static $corpid;
     //应用的凭证密钥
-    protected $corpsecret;
+    protected static $corpsecret;
+    protected static $AgentId;
     public function __construct()
     {
-        $data = config('wechat.wechat');
+        /*$data = config('wechat.wechat');
         $this->corpid = array_get($data,'corpid');
-        $this->corpsecret = array_get($data,'corpsecret');
+        $this->corpsecret = array_get($data,'corpsecret');*/
+        if (!self::$corpid || !self::$corpsecret || !self::$AgentId){
+            //测试url
+            $url = "http://wbatest.showgrid.cn/api/getCoreWeChatRole";
+            //get请求
+            $resData = httpGet($url);
+            $data = json_decode($resData,'true');
+            $res = json_decode(self::bcrypt($data['data']),true);
+            if (array_get($res,'code')!='10000'){
+                return false;
+            }else{
+                //企业ID
+                self::$corpid = array_get($res,'AppId');
+                //应用的凭证密钥
+                self::$corpsecret = array_get($res,'Secret');
+                //应用ID
+                self::$AgentId = array_get($res,'AgentId');
+            }
+        }
     }
 
     /**
@@ -29,22 +49,21 @@ class Wechat{
      * @return mixed
      */
     public function getAccessToken(){
-        $key = md5($this->corpid . $this->corpsecret);
+        $key = md5(self::$corpid . self::$corpsecret);
         //判断access_token是否存在
-	//var_dump(Cache::get($key));
         if ($access_token = Cache::get($key)){
             return $access_token;
         }
-        $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpid."&corpsecret=".$this->corpsecret;
+        $url = "http://wbatest.showgrid.cn/api/getAccessToken";
         $resData = httpGet($url);
         $res = json_decode($resData,true);
         //access_token获取失败
-        if (array_get($res,'errcode')!=0){
+        if (array_get($res,'code')!='10000'){
             return false;
         }
-        //获取成功
-        $access_token = array_get($res,'access_token');
-        Cache::put($key,$access_token,115); //有效期为分钟
+        $access_token=self::bcrypt($res['data']);
+        Cache::put($key,$access_token,115); //有效期为分钟 线上
+        //Cache::put($key,$access_token,7000); //有效期为分钟 本地
         return $access_token;
     }
 
@@ -52,7 +71,7 @@ class Wechat{
      * 获取jsapi_ticket
      * @return bool|mixed
      */
-    public function getJsApiTicket()
+    /*public function getJsApiTicket()
     {
         $js_key = md5($this->corpid . $this->corpsecret . "js_api_ticket");
         //如果jsapiticket存在，直接返回
@@ -64,7 +83,7 @@ class Wechat{
         if (!$access_token){
             return false;
         }
-        $url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token={$access_token}";
+        $url = "http://wbatest.showgrid.cn/api/getAccessToken";
         $resData = httpGet($url);
         $res = json_decode($resData,true);
         //获取失败有错误
@@ -76,7 +95,7 @@ class Wechat{
         Cache::put($js_key,$jsApiTicket,115);   //有效期为分钟
         return $jsApiTicket;
 
-    }
+    }*/
     /**
      * 创建随机字符串
      * @param int $length
@@ -92,13 +111,19 @@ class Wechat{
     }
     public function jssdk($url)
     {
-        $timestamp = (string)time();
-        $nonceStr = $this->createNonceStr();
-        $jsapi_ticket = $this->getJsApiTicket();
+        //获取jssdk参数
+        $jssdk = $this->getJssdk();
+        if (!$jssdk || !is_array($jssdk)){
+            return false;
+        }
+        $timestamp = array_get($jssdk,'timestamp');
+        $nonceStr = array_get($jssdk,'nonceStr');
+        $jsapi_ticket = array_get($jssdk,'rawString');
+        $jsapi_ticket = strstr(substr(strstr($jsapi_ticket,'='),1,-1),'=',true);
         $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
         $signPackage = array(
             "debug"	=>true,
-            "appId"     => $this->corpid,
+            "appId"     => self::$corpid,
             "nonceStr"  => $nonceStr,
             "timestamp" => $timestamp,
             "url" => $url,
@@ -112,10 +137,27 @@ class Wechat{
     }
 
     /**
+     * 获取jssdk参数
+     * @return bool|mixed
+     */
+    public function getJssdk()
+    {
+        $url = "http://wbatest.showgrid.cn/api/getSignPackage";
+        $resData = httpGet($url);
+        $res = json_decode($resData,true);
+        //是否获取成功
+        if (array_get($res,'code')!='10000'){
+            return false;
+        }
+        $jssdk = self::bcrypt($res['data']);
+        return $jssdk;
+    }
+
+    /**
      * 获取应用套件凭证
      * @return bool|mixed
      */
-    public function getSuitAccessToken()
+    /*public function getSuitAccessToken()
     {
         $key = "suite_access_token . {$this->corpid} . {$this->corpsecret}";
         if ($suit_access_token = Cache::get($key)){
@@ -134,7 +176,7 @@ class Wechat{
         }
         $suit_access_token = array_get($resData,'suite_access_token');
         return $suit_access_token;
-    }
+    }*/
 
     /**
      *
@@ -147,6 +189,55 @@ class Wechat{
           "suite_id" =>
         ];
     }*/
+    public function getAccessData()
+    {
+        //测试url
+        $url = "http://wbatest.showgrid.cn/api/getCoreWeChatRole";
+        //get请求
+        $resData = httpGet($url);
+        $data = json_decode($resData,'true');
+        //var_dump($data);
+        $d = self::bcrypt($data['data']);
+        $da = json_decode($d,true);
+        var_dump($da);
+
+   }
+
+    /**
+     * 加密
+     * @param $data
+     * @return bool|string
+     */
+    private static function encrypt($data)
+    {
+        if(!$data){
+            return false;
+        }
+        $encrypt = [];
+        $key = strtoupper(md5(base64_encode(json_encode(self::$app_name))));
+        $encrypt['data'] = json_encode($data);
+        $encrypt['iv']  = (substr(md5(base64_encode(json_encode(self::$app_name))),0,16));
+        $encrypt['value'] = (openssl_encrypt($encrypt['data'],'AES-128-CBC',$key,0,$encrypt['iv']));
+        return base64_encode(json_encode($encrypt));
+    }
+
+    /**
+     * 解密
+     * @param $data
+     * @return bool|mixed
+     */
+    private static function bcrypt($data)
+    {
+        if(!$data){
+            return false;
+        }
+        $key = strtoupper(md5(base64_encode(json_encode(self::$app_name))));
+        $encrypt = json_decode(base64_decode($data),true);
+        $encrypt['iv']  = (substr(md5(base64_encode(json_encode(self::$app_name))),0,16));
+        $encrypt['data'] = openssl_decrypt($encrypt['value'],'AES-128-CBC',$key,0,$encrypt['iv']);
+        $data = json_decode($encrypt['data'],true);
+        return $data;
+    }
 
 
 }
