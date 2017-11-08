@@ -15,32 +15,31 @@ use Cache;
 class Wechat{
     private static $app_name = 'ikea';
     //企业ID
-    protected static $corpid;
+    protected $corpid;
     //应用的凭证密钥
-    protected static $corpsecret;
-    protected static $AgentId;
+    protected $corpsecret;
+    protected $AgentId;
     public function __construct()
     {
         /*$data = config('wechat.wechat');
         $this->corpid = array_get($data,'corpid');
         $this->corpsecret = array_get($data,'corpsecret');*/
-        if (!self::$corpid || !self::$corpsecret || !self::$AgentId){
-            //测试url
-            $url = "http://wbatest.showgrid.cn/api/getCoreWeChatRole";
-            //get请求
-            $resData = httpGet($url);
-            $data = json_decode($resData,'true');
-            $res = json_decode(self::bcrypt($data['data']),true);
-            if (array_get($res,'code')!='10000'){
-                return false;
-            }else{
-                //企业ID
-                self::$corpid = array_get($res,'AppId');
-                //应用的凭证密钥
-                self::$corpsecret = array_get($res,'Secret');
-                //应用ID
-                self::$AgentId = array_get($res,'AgentId');
-            }
+        //测试url
+        $url = "http://wbatest.showgrid.cn/api/getCoreWeChatRole";
+        //get请求
+        $resData = httpGet($url);
+
+        $data = json_decode($resData,'true');
+        $res = json_decode(self::bcrypt($data['data']),true);
+        if (array_get($data,'code')!='10000'){
+            return false;
+        }else{
+            //企业ID
+            $this->corpid = array_get($res,'AppId');
+            //应用的凭证密钥
+            $this->corpsecret = array_get($res,'Secret');
+            //应用ID
+            $this->AgentId = array_get($res,'AgentId');
         }
     }
 
@@ -49,7 +48,7 @@ class Wechat{
      * @return mixed
      */
     public function getAccessToken(){
-        $key = md5(self::$corpid . self::$corpsecret);
+        $key = md5($this->corpid . $this->corpsecret);
         //判断access_token是否存在
         if ($access_token = Cache::get($key)){
             return $access_token;
@@ -123,7 +122,7 @@ class Wechat{
         $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
         $signPackage = array(
             "debug"	=>true,
-            "appId"     => self::$corpid,
+            "appId"     => $this->corpid,
             "nonceStr"  => $nonceStr,
             "timestamp" => $timestamp,
             "url" => $url,
