@@ -61,7 +61,7 @@ class Wechat{
             return false;
         }
         $access_token=self::bcrypt($res['data']);
-        Cache::put($key,$access_token,115); //有效期为分钟 线上
+        Cache::put($key,$access_token,1*60); //有效期为分钟 线上
         //Cache::put($key,$access_token,7000); //有效期为分钟 本地
         return $access_token;
     }
@@ -117,10 +117,7 @@ class Wechat{
         }
         $timestamp = (string)array_get($jssdk,'timestamp');
         $nonceStr = array_get($jssdk,'nonceStr');
-        $js_ticket = array_get($jssdk,'rawString');
-        $jsapi_ticket = strstr(substr(strstr($js_ticket,'='),1,-1),'&',true);
-        $string = "jsapi_ticket={$jsapi_ticket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
-        //var_dump($string);
+        $string = array_get($jssdk,'rawString');
         $signPackage = array(
             "debug"	=>true,
             "appId"     => $this->corpid,
@@ -153,42 +150,10 @@ class Wechat{
         return $jssdk;
     }
 
-    /**
-     * 获取应用套件凭证
-     * @return bool|mixed
-     */
-    /*public function getSuitAccessToken()
-    {
-        $key = "suite_access_token . {$this->corpid} . {$this->corpsecret}";
-        if ($suit_access_token = Cache::get($key)){
-            return $suit_access_token;
-        }
-        $url = "ttps://qyapi.weixin.qq.com/cgi-bin/service/get_suite_token";
-        $data = [
-            "suite_id"=>"id_value" ,
-            "suite_secret"=>"secret_value",
-            "suite_ticket"=>"ticket_value"
-        ];
-        $resData = http_post($url,json_encode($data));
-        $res = json_decode($resData,true);
-        if (array_get($res,'errcode')!=0){
-            return false;
-        }
-        $suit_access_token = array_get($resData,'suite_access_token');
-        return $suit_access_token;
-    }*/
 
     /**
-     *
+     * 获取appId等数据
      */
-   /* public function getPreAuthCode()
-    {
-        $suit_access_token = $this->getSuitAccessToken();
-        $url = "https://qyapi.weixin.qq.com/cgi-bin/service/get_pre_auth_code?suite_access_token={$suit_access_token}";
-        $data = [
-          "suite_id" =>
-        ];
-    }*/
     public function getAccessData()
     {
         //测试url
